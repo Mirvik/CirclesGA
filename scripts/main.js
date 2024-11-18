@@ -12,7 +12,7 @@ class Shape {
 
 
 // Some functions
-function getWindowProperty() {
+function getWindowDimensions() {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -24,7 +24,7 @@ function getWindowProperty() {
 
 }
 
-function getInitialCoords() {
+function initializeCircleCoords() {
 
     const x = window.innerWidth / 2;
     const y = window.innerHeight - 50;
@@ -35,30 +35,30 @@ function getInitialCoords() {
     }
 }
 
-function getFinishCoords(squareX, squareY, squareSize) {
+function calculateSquareCoords(topLeftX, topLeftY, squareSize) {
 
    
 
-    const startFinishX = squareX + 5;
-    const finishFinishX = squareX + squareSize + 5;
+    const startX = topLeftX + OFFSET;
+    const endX = topLeftX + squareSize + OFFSET;
 
-    const startFinishY = squareY + 5;
-    const finishFinishY = squareY + squareSize + 5;
+    const startY = topLeftY + OFFSET;
+    const endY = topLeftY + squareSize + OFFSET;
 
     console.log("-----Koordynaty kwadrata-----");
-    console.log("_____Przedzial x od " + (startFinishX) + " do " + (finishFinishX) + "_____");
-    console.log("_____Przedzial y od " + (startFinishY) + " do " + (finishFinishY) + "_____");
+    console.log("_____Przedzial x od " + (startX) + " do " + (endX) + "_____");
+    console.log("_____Przedzial y od " + (startY) + " do " + (endY) + "_____");
 
 
-    const ArrFinishX = Array.from({length: finishFinishX - startFinishX + 1}, (_, i) => i + startFinishX);
-    const ArrFinishY = Array.from({length: finishFinishY - startFinishY + 1}, (_, i) => i + startFinishY);
+    const finishCoordinatesX  = Array.from({length: endX - startX + 1}, (_, i) => i + startX);
+    const finishCoordinatesY = Array.from({length: endY - startY + 1}, (_, i) => i + startY);
 
-    console.log(ArrFinishX);
-    console.log(ArrFinishY);
+    console.log(finishCoordinatesX);
+    console.log(finishCoordinatesY);
 
     return {
-        'arrX': ArrFinishX,
-        'arrY': ArrFinishY
+        'arrX': finishCoordinatesX,
+        'arrY': finishCoordinatesY
     }
     
 }
@@ -71,54 +71,36 @@ function drawCircles(population) {
     });
 }
 
-function moveCircles(population, roundNum) {
+function updateCirclePositions(population, roundNum) {
 
     const moveAmount = MOVE_SPEED;
     population.forEach(ind => {
 
-        switch(ind[roundNum]) {
+        const direction = ind[roundNum];
+        
+        switch(direction) {
 
 
-            case 1:
-                ind.shape.y -= moveAmount;
-                break;
+            case 1: ind.shape.y -= moveAmount; break;                               // Up: ↑
 
-            case 2:
-                ind.shape.x += moveAmount / 2;
-                ind.shape.y -= moveAmount / 2;
-                break;
-            
-            case 3:
-                ind.shape.x += moveAmount;
-                break;
+            case 2: ind.shape.x += moveAmount; ind.shape.y -= moveAmount; break;    // Up-Right: ↗    
 
-            case 4:
-                ind.shape.x += moveAmount / 2;
-                ind.shape.y += moveAmount / 2;
-                break;
-            
-            case 5:
-                ind.shape.y += moveAmount;
-                break;
-            
-            case 6:
-                ind.shape.x -= moveAmount / 2;
-                ind.shape.y += moveAmount / 2;
-                break;
-            
-            case 7:
-                ind.shape.x -= moveAmount;
-                break;
+            case 3: ind.shape.x += moveAmount; break;                               // Right: →
 
-            case 8:
-                ind.shape.x -= moveAmount / 2;
-                ind.shape.y -= moveAmount / 2;
-                break;
+            case 4: ind.shape.x += moveAmount; ind.shape.y += moveAmount; break;    // Down-Right: ↘
+
+            case 5: ind.shape.y += moveAmount; break;                               // Down: ↓
+
+            case 6: ind.shape.x -= moveAmount; ind.shape.y += moveAmount; break;    // Down-Left: ↙
+
+            case 7: ind.shape.x -= moveAmount; break;                               // Left: ←
+
+            case 8: ind.shape.x -= moveAmount; ind.shape.y -= moveAmount; break;    // Up-Left: ↖
         }
     });
 }
 
-function hasReachedFinish(population) {
+function hasReachedGoal(population) {
 
     for (let ind of population) {
         if (FINISH_COORDS.arrX.includes(ind.shape.x) && FINISH_COORDS.arrY.includes(ind.shape.y)) {
@@ -132,33 +114,35 @@ function hasReachedFinish(population) {
 
 
 
-// ----------------------------------CONSTANTS-------------------------------------------------|
-                                                                                            // |
-const WINDOW_PROPERTY = getWindowProperty();                                                // |
-                                                                                            // |
-const INITIAL_CIRCLE_COORDS = getInitialCoords();                                           // |
-                                                                                            // |
-const SQUARE_SIZE = 20;                                                                     // |
-const CIRCLE_SIZE = 13;                                                                     // |
-                                                                                            // |
-// Finish Square                                                                            // |
-const SQUARE_X = INITIAL_CIRCLE_COORDS.x - 10;                                              // |
-const SQUARE_Y = 30;                                                                        // |
-const FINISH_SQUARE = new Shape(SQUARE_X, SQUARE_Y, SQUARE_SIZE);                           // |
-                                                                                            // |
-                                                                                            // |
-const FINISH_COORDS = getFinishCoords(FINISH_SQUARE.x, FINISH_SQUARE.y, FINISH_SQUARE.size);// |
-                                                                                            // |
-const N_MOVEMENTS = 8;                                                                      // |
-const N_VECTOR = 1000;                                                                      // |
-const N_INDIVIDUALS = 1000;                                                                 // |
-const MUTATION_RATE = 0.01;                                                                 // |
-                                                                                            // |
-const MOVE_SPEED = 5;                                                                      // |
-                                                                                            // |
-                                                                                            // |
-                                                                                            // |
-// ---------------------------------CONSTANTS END----------------------------------------------|
+// -----------------------------------------------CONSTANTS----------------------------------------------------|
+                                                                                                            // |
+const WINDOW_DIMENSIONS = getWindowDimensions();                                                            // |
+                                                                                                            // |
+const INITIAL_CIRCLE_COORDS = initializeCircleCoords();                                                     // |
+                                                                                                            // |
+const SQUARE_SIZE = 20;                                                                                     // |
+const CIRCLE_SIZE = 13;                                                                                     // |
+                                                                                                            // |
+const OFFSET = 5;                                                                                           // |
+                                                                                                            // |
+// Finish Square                                                                                            // |
+const SQUARE_X = INITIAL_CIRCLE_COORDS.x - 10;                                                              // |
+const SQUARE_Y = 30;                                                                                        // |
+const FINISH_SQUARE = new Shape(SQUARE_X, SQUARE_Y, SQUARE_SIZE);                                           // |
+                                                                                                            // |
+                                                                                                            // |
+const FINISH_COORDS = calculateSquareCoords(FINISH_SQUARE.x, FINISH_SQUARE.y, FINISH_SQUARE.size);          // |
+                                                                                                            // |
+const N_DIRECTIONS = 8;                                                                                     // |
+const NUM_MOVEMENTS = 1000;                                                                                 // |
+const POPULATION_SIZE = 1000;                                                                               // |
+const MUTATION_RATE = 0.01;                                                                                 // |
+                                                                                                            // |
+const MOVE_SPEED = 5;                                                                                       // |
+                                                                                                            // |
+                                                                                                            // |
+                                                                                                            // |
+// ---------------------------------------------CONSTANTS END--------------------------------------------------|
 
 
 
@@ -180,12 +164,12 @@ class IndividualCircle extends Array{
 
 }
 
-function createIndividual() {
+function generateIndividual() {
     let x = INITIAL_CIRCLE_COORDS.x;
     let y = INITIAL_CIRCLE_COORDS.y;
 
     const shape = new Shape(x, y, CIRCLE_SIZE);
-    const arrayMovement = Array.from({length: N_VECTOR}, () => Math.floor(Math.random() * 8) + 1);
+    const arrayMovement = Array.from({length: NUM_MOVEMENTS}, () => Math.floor(Math.random() * N_DIRECTIONS) + 1);
 
     const circle = new IndividualCircle(arrayMovement);
     circle.shape = shape;
@@ -193,8 +177,8 @@ function createIndividual() {
     return circle;
 }
 
-function createPopulation() {
-    const population = Array.from({length: N_INDIVIDUALS}, () => createIndividual());
+function generateInitialPopulation() {
+    const population = Array.from({length: POPULATION_SIZE}, () => generateIndividual());
 
     return population;
 }
@@ -210,31 +194,24 @@ function fitnessFunction(ind) {
 }
 
 function rouletteSelection(population) {
-    const totalFitnesses = population.reduce((acc, ind) => acc + ind.fitness, 0);
-    const probabilities = population.map((ind) => ind.fitness / totalFitnesses);
+    const totalFitness = population.reduce((acc, ind) => acc + ind.fitness, 0);
+    let rand = Math.random() * totalFitness;
 
-    let rand = Math.random();
-    let cumulativeProbability = 0;
-
-    for (let i = 0; i < population.length; i++) {
-
-        cumulativeProbability += probabilities[i];
-
-        if (rand < cumulativeProbability) {
-            return population[i];
-        }
+    for (const ind of population) {
+        rand -= ind.fitness;
+        if (rand <= 0) return ind;
     }
 }
 
 
 function crossover(parent1, parent2) {
 
-    const crossoverPoint = Math.floor(Math.random() * N_VECTOR) + 1;
+    const crossoverPoint = Math.floor(Math.random() * NUM_MOVEMENTS);
 
     let child1 = [];
     let child2 = [];
 
-    for (let i = 0; i < N_VECTOR; i++) {
+    for (let i = 0; i < NUM_MOVEMENTS; i++) {
 
         // If i is less than cross point
         if (i < crossoverPoint) {
@@ -291,21 +268,17 @@ function createNewGeneration(population) {
 
     let newPopulation = [];
 
-    for (let i = 0; i < Math.floor(population.length / 2); i++) {
+    while (newPopulation.length < population.length) {
         let parent1 = rouletteSelection(population);
         let parent2 = rouletteSelection(population);
 
-        let offspring = crossover(parent1, parent2);
+        let two_offspring = crossover(parent1, parent2);
 
         if (Math.random() < MUTATION_RATE) {
-            mutate(offspring[0]);
+            mutate(two_offspring[0]);
         }
 
-        newPopulation.push(...offspring);
-    }
-
-    if (newPopulation.length != population.length) {
-        newPopulation.push(rouletteSelection(population));
+        newPopulation.push(...two_offspring);
     }
 
     return newPopulation;
@@ -318,7 +291,7 @@ function createNewGeneration(population) {
 
 
 // Variables
-let population = createPopulation();
+let population = generateInitialPopulation();
 console.log("\n----Population----");
 console.log(population);
 
@@ -330,7 +303,7 @@ let startTime = new Date().getTime();
 
 // Setup
 function setup() {
-    createCanvas(WINDOW_PROPERTY.width, WINDOW_PROPERTY.height);
+    createCanvas(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height);
     frameRate(60);
 
 }
@@ -359,14 +332,14 @@ function draw() {
     textSize(20);
     textStyle(BOLD);
 
-    text(`Fastest Time: ${fastestTime} sec`, 20, WINDOW_PROPERTY.height - 140);
-    text(`Generation: ${generationNum}`, 20, WINDOW_PROPERTY.height - 110);
-    text(`Population: ${population.length}`, 20, WINDOW_PROPERTY.height - 80);
-    text(`Mutation Rate: ${MUTATION_RATE * 100}%`, 20, WINDOW_PROPERTY.height - 50);
+    text(`Fastest Time: ${fastestTime} sec`, 20, WINDOW_DIMENSIONS.height - 140);
+    text(`Generation: ${generationNum}`, 20, WINDOW_DIMENSIONS.height - 110);
+    text(`Population: ${population.length}`, 20, WINDOW_DIMENSIONS.height - 80);
+    text(`Mutation Rate: ${MUTATION_RATE * 100}%`, 20, WINDOW_DIMENSIONS.height - 50);
 
     
-    // Has any circle reached finish?
-    if (hasReachedFinish(population) || roundNum > N_VECTOR) {
+    // Has any circle reached goal?
+    if (hasReachedGoal(population) || roundNum >= NUM_MOVEMENTS) {
         
         const finishTime = new Date().getTime();
         console.log(finishTime);
@@ -386,7 +359,7 @@ function draw() {
         generationNum += 1;
 
     } else {
-        moveCircles(population, roundNum);
+        updateCirclePositions(population, roundNum);
     }
 
     // Next round
