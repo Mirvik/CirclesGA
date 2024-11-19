@@ -165,14 +165,11 @@ class IndividualCircle extends Array{
 }
 
 function generateIndividual() {
-    let x = INITIAL_CIRCLE_COORDS.x;
-    let y = INITIAL_CIRCLE_COORDS.y;
 
-    const shape = new Shape(x, y, CIRCLE_SIZE);
     const arrayMovement = Array.from({length: NUM_MOVEMENTS}, () => Math.floor(Math.random() * N_DIRECTIONS) + 1);
 
     const circle = new IndividualCircle(arrayMovement);
-    circle.shape = shape;
+    circle.shape = new Shape(INITIAL_CIRCLE_COORDS.x, INITIAL_CIRCLE_COORDS.y, CIRCLE_SIZE);
 
     return circle;
 }
