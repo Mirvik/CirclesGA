@@ -102,7 +102,7 @@ function updateCirclePositions(population, roundNum) {
 
 function hasReachedGoal(population) {
 
-    for (let ind of population) {
+    for (const ind of population) {
         if (FINISH_COORDS.arrX.includes(ind.shape.x) && FINISH_COORDS.arrY.includes(ind.shape.y)) {
             return true;
         }
@@ -166,9 +166,9 @@ class IndividualCircle extends Array{
 
 function generateIndividual() {
 
-    const arrayMovement = Array.from({length: NUM_MOVEMENTS}, () => Math.floor(Math.random() * N_DIRECTIONS) + 1);
+    const arrayOfMovements = Array.from({length: NUM_MOVEMENTS}, () => Math.floor(Math.random() * N_DIRECTIONS) + 1);
 
-    const circle = new IndividualCircle(arrayMovement);
+    const circle = new IndividualCircle(arrayOfMovements);
     circle.shape = new Shape(INITIAL_CIRCLE_COORDS.x, INITIAL_CIRCLE_COORDS.y, CIRCLE_SIZE);
 
     return circle;
